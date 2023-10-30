@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://cgcna7e5haoj3"]
+
+[ext_resource type="Script" path="res://Fretboard/Board.gd" id="1_653x3"]
+
+[node name="FretboardScene" type="Node2D"]
+metadata/_edit_group_ = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+follow_viewport_enabled = true
+
+[node name="CanvasGroup" type="CanvasGroup" parent="CanvasLayer"]
+
+[node name="Node2D" type="Node2D" parent="CanvasLayer/CanvasGroup"]
+script = ExtResource("1_653x3")
