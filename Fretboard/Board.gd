@@ -23,10 +23,12 @@ class AString:
 class Note:
     var string: int
     var fret: int
+    var position: Vector2
 
-    func _init(a_string: int, a_fret: int):
+    func _init(a_string: int, a_fret: int, a_position: Vector2):
         self.string = a_string
         self.fret = a_fret
+        self.position = a_position
 
 # Board width in fraction of viewport height
 const BOARD_WIDTH = 0.15
@@ -75,7 +77,10 @@ func _ready():
 func _input(event):
     # Mouse in viewport coordinates.
     if event is InputEventMouseButton and current_note:
-        print("Mouse Click/Unclick at: ", event.position, current_note)
+        var node_highlight = NoteHighlight.new(Color(0.5, 1, 0.3))
+        node_highlight.set_transform(Transform2D(0, current_note.position))
+
+        self.add_child(node_highlight)
     elif event is InputEventMouseMotion:
         current_note = detect_current_highlited_note(event.position)
 
@@ -84,11 +89,15 @@ func _draw():
     draw_dots()
     draw_frets()
     draw_strings()
+    draw_zero_fret()
     draw_hovered_note()
 
 func calculate_frets():
     var fretboard_width = (self.top_right_point.x - self.top_left_point.x)
     var scale_len = fretboard_width * 1.31
+
+    #Add zero fret
+    self.frets.append(Fret.new(self.top_left_point, self.bottom_left_point))
 
     # Current fret x from which we calculate next fret position
     var last_fret_x = self.top_left_point.x
@@ -142,30 +151,66 @@ func detect_current_highlited_note(mouse_position: Vector2) -> Note:
     var fret_search = func(fret: Fret, mpos_x: Fret): return fret.top_point.x < mpos_x.top_point.x
     var string_search = func(string: AString, mpos_y: AString): return string.left_point.y < mpos_y.left_point.y
 
+    var first_line_is_closer = func(line1_start, line1_end, line2_start, line2_end) -> bool:
+        var first_point = Geometry2D.get_closest_point_to_segment_uncapped(mouse_position, line1_start, line1_end)
+        var second_point = Geometry2D.get_closest_point_to_segment_uncapped(mouse_position, line2_start, line2_end)
+
+        return mouse_position.distance_to(first_point) < mouse_position.distance_to(second_point)
+
     # Search for hovered fret and string
     # We have to create new inner class values, because type system fails to typecheck the Callable
+    # Binary search finds next to mouse position fret or string. But, we still need to check if mouse
+    # position is closer to the previous entity
+
+    # Next to mouse fret and string
     var fret = self.frets.bsearch_custom(Fret.new(mouse_position, mouse_position), fret_search)
     var string = self.strings.bsearch_custom(AString.new(mouse_position, mouse_position), string_search)
 
-    fret = fret if fret < self.frets.size() else self.frets.size() - 1
-    string = string if string < self.strings.size() else self.strings.size() - 1
+    # Cap to the last string and fret
+    fret = min(fret, self.frets.size() - 1)
+    string = min(string, self.strings.size() - 1)
+
+    # Find closer fret
+    if fret > 0:
+        fret = fret if first_line_is_closer.call(self.frets[fret].top_point,
+                                                 self.frets[fret].bottom_point,
+                                                 self.frets[fret - 1].top_point,
+                                                 self.frets[fret - 1].bottom_point) else fret - 1
+    # Find actually closer string
+    if string > 0:
+        string = string if first_line_is_closer.call(self.strings[string].left_point,
+                                                 self.strings[string].right_point,
+                                                 self.strings[string - 1].left_point,
+                                                 self.strings[string - 1].right_point) else string - 1
+
+    # Find fret and string intersection
+    var intersection = Geometry2D.line_intersects_line(
+        self.frets[fret].top_point,
+        Vector2(0, 1),
+        self.strings[string].left_point,
+        self.strings[string].right_point - self.strings[string].left_point)
 
     queue_redraw()
 
-    return Note.new(string, fret)
+    return Note.new(string, fret, intersection)
 
 func draw_fretboard():
     draw_polyline([self.top_left_point, self.top_right_point,
                    self.bottom_right_point, self.bottom_left_point,
                    self.top_left_point],
-        Color(1, 1, 1),
-        3,
+        Color(.1, .1, .1),
+        0.5,
         true)
 
 # Draw frets. vectors are used to detect intersections with frets
 func draw_frets():
-    for fret in self.frets:
-        draw_line(fret.top_point, fret.bottom_point, Color(.8, .8, .8), 2, true)
+    for i in range(1, self.frets.size()):
+        var fret = self.frets[i]
+        draw_line(fret.top_point, fret.bottom_point, Color(.4, .4, .4), 3, true)
+
+func draw_zero_fret():
+    var fret = self.frets[0]
+    draw_line(fret.top_point, fret.bottom_point, Color(.8, .8, .8), 7, true)
 
 func draw_dots():
     var dot_radius = 7
@@ -202,6 +247,11 @@ func draw_strings():
                          Color(1, .95, 0.8)]
 
     for i in range(6):
+        # Draw shadow
+        draw_line(self.strings[i].left_point, self.strings[i].right_point,
+                  Color(0, 0, 0, .5), strings_width[i] * 1.5, true)
+
+        # Draw string
         draw_line(self.strings[i].left_point, self.strings[i].right_point,
                   string_colors[i], strings_width[i] / 2, true)
 
@@ -209,7 +259,4 @@ func draw_hovered_note():
     if not self.current_note:
         return
 
-    var x = self.frets[self.current_note.fret].top_point.x
-    var y = self.strings[self.current_note.string].left_point.y
-
-    draw_circle(Vector2(x, y), 10, Color(0.3, 1.0, 0.4, 0.7))
+    draw_circle(self.current_note.position, 7, Color(1, 1, 1, 0.6))
