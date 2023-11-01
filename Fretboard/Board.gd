@@ -47,6 +47,9 @@ var bottom_right_point: Vector2
 # Polygon which we use to highlight mouse position event if mouse is out of the fretboard boundaries
 var out_of_bounds_polygon: PackedVector2Array
 
+var inlay_texture: Texture2D = load("res://Sprites/common_inlay.png")
+var twelve_inlay_texture: Texture2D = load("res://Sprites/12_inlay.png")
+
 # Current
 var current_note: Note
 
@@ -86,7 +89,7 @@ func _input(event):
 
 func _draw():
     draw_fretboard()
-    draw_dots()
+    draw_markers()
     draw_frets()
     draw_strings()
     draw_zero_fret()
@@ -195,10 +198,15 @@ func detect_current_highlited_note(mouse_position: Vector2) -> Note:
     return Note.new(string, fret, intersection)
 
 func draw_fretboard():
+    draw_colored_polygon([self.top_left_point, self.top_right_point,
+                   self.bottom_right_point, self.bottom_left_point,
+                   self.top_left_point],
+        Color(.05, .05, .05))
+
     draw_polyline([self.top_left_point, self.top_right_point,
                    self.bottom_right_point, self.bottom_left_point,
                    self.top_left_point],
-        Color(.1, .1, .1),
+        Color(.2, .2, .2),
         0.5,
         true)
 
@@ -212,17 +220,24 @@ func draw_zero_fret():
     var fret = self.frets[0]
     draw_line(fret.top_point, fret.bottom_point, Color(.8, .8, .8), 7, true)
 
-func draw_dots():
-    var dot_radius = 7
+func draw_markers():
+    # Marker margin from one side
+    var marker_margin = Vector2(1./4, 2./12)
 
     var draw_dot = func(square_bw_frets: Rect2):
-        var center = Vector2(square_bw_frets.get_center())
-        draw_circle(center, dot_radius, Color(0.7, 0.55, 0.4))
+        var pos = square_bw_frets.position + square_bw_frets.size * marker_margin
+        var size = square_bw_frets.size * (Vector2.ONE - marker_margin * 2)
+
+        draw_texture_rect(self.inlay_texture, Rect2(pos, size), false, Color(.9, .9, .9))
 
     var draw_double_dot = func(square_bw_frets: Rect2):
-        var center = Vector2(square_bw_frets.get_center())
-        draw_circle(center - Vector2(0, dot_radius * 3), dot_radius, Color(0.9, 0.8, 0.7))
-        draw_circle(center + Vector2(0, dot_radius * 3), dot_radius, Color(0.9, 0.8, 0.7))
+        # Make 12 fret a bit longer
+        var twelve_margin = marker_margin * Vector2(1, 0.5)
+
+        var pos = square_bw_frets.position + square_bw_frets.size * twelve_margin
+        var size = square_bw_frets.size * (Vector2.ONE - twelve_margin * 2)
+
+        draw_texture_rect(self.twelve_inlay_texture, Rect2(pos, size), false, Color(.9, .9, .9))
 
     var indices_to_draw = [3, 5, 7, 9, 15, 17, 19, 21]
 
@@ -237,14 +252,14 @@ func draw_dots():
 
 func draw_strings():
     # Strings width from thinner to thicker
-    var strings_width = [0.9, 1.2, 1.5, 2.0, 3.5, 4.5]
+    var strings_width = [1., 1.1, 1.2, 1.5, 2, 3]
     # String colors from thinner to thicker
-    var string_colors = [Color(.8, .9, 1),
-                         Color(.8, .9, 1),
-                         Color(.8, .9, 1),
-                         Color(.8, .9, 1),
-                         Color(1, .95, 0.8),
-                         Color(1, .95, 0.8)]
+    var string_colors = [Color(.9, .95, 1),
+                         Color(.9, .95, 1),
+                         Color(.9, .95, 1),
+                         Color(.9, .95, 1),
+                         Color(1, .95, 0.9),
+                         Color(1, .95, 0.9)]
 
     for i in range(6):
         # Draw shadow
