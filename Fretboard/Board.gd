@@ -2,33 +2,7 @@ class_name Fretboard
 
 extends Node2D
 
-# Fretboard class to store fret positions
-class Fret:
-    var top_point: Vector2
-    var bottom_point: Vector2
-
-    func _init(a_top_point: Vector2, a_bottom_point: Vector2):
-        self.top_point = a_top_point
-        self.bottom_point = a_bottom_point
-
-# Fretboard class to store fret positions
-class AString:
-    var left_point: Vector2
-    var right_point: Vector2
-
-    func _init(a_left_point: Vector2, a_right_point: Vector2):
-        self.left_point = a_left_point
-        self.right_point = a_right_point
-
-class Note:
-    var string: int
-    var fret: int
-    var position: Vector2
-
-    func _init(a_string: int, a_fret: int, a_position: Vector2):
-        self.string = a_string
-        self.fret = a_fret
-        self.position = a_position
+const DataTypes = preload("res://Fretboard/DataTypes.gd")
 
 # Board width in fraction of viewport height
 const BOARD_WIDTH = 0.15
@@ -37,8 +11,8 @@ const BOARD_MARGIN = 30
 const NUM_FRETS = 24
 const FRET_POSITION_DIVIDER = 17.817
 
-var frets: Array[Fret]
-var strings: Array[AString]
+var frets: Array[DataTypes.Fret]
+var strings: Array[DataTypes.AString]
 
 var top_left_point: Vector2
 var top_right_point: Vector2
@@ -51,7 +25,8 @@ var inlay_texture: Texture2D = load("res://Sprites/common_inlay.png")
 var twelve_inlay_texture: Texture2D = load("res://Sprites/12_inlay.png")
 
 # Current
-var current_note: Note
+var current_note: DataTypes.Note
+var highlights: Array[NoteHighlight]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -74,33 +49,44 @@ func _ready():
         self.bottom_left_point + Vector2(-out_of_bounds_mouse_radius, out_of_bounds_mouse_radius),
     ]
 
-    calculate_frets()
-    calculate_strings()
+    self.__calculate_frets()
+    self.__calculate_strings()
 
 func _input(event):
     # Mouse in viewport coordinates.
     if event is InputEventMouseButton and current_note:
-        var node_highlight = NoteHighlight.new(Color(0.5, 1, 0.3))
-        node_highlight.set_transform(Transform2D(0, current_note.position))
+        var node_highlight = NoteHighlight.new(Color(0.5, 1, 0.3), NoteHighlight.HighLightType.BLINK)
+        node_highlight.set_position(current_note.position())
 
         self.add_child(node_highlight)
     elif event is InputEventMouseMotion:
-        current_note = detect_current_highlited_note(event.position)
+        var hovered_position = __detect_current_highlited_note(event.position)
+
+        # If out of bound, clear nighlight marker
+        if not hovered_position:
+            if self.current_note:
+                self.current_note.clear()
+                self.current_note = null
+            return
+
+        # Else create or update marker
+        if not self.current_note:
+            self.current_note = DataTypes.Note.new(self)
+        self.current_note.move(hovered_position.string, hovered_position.fret, hovered_position.position)
 
 func _draw():
-    draw_fretboard()
-    draw_markers()
-    draw_frets()
-    draw_strings()
-    draw_zero_fret()
-    draw_hovered_note()
+    self.__draw_fretboard()
+    self.__draw_markers()
+    self.__draw_frets()
+    self.__draw_strings()
+    self.__draw_zero_fret()
 
-func calculate_frets():
+func __calculate_frets():
     var fretboard_width = (self.top_right_point.x - self.top_left_point.x)
     var scale_len = fretboard_width * 1.31
 
     #Add zero fret
-    self.frets.append(Fret.new(self.top_left_point, self.bottom_left_point))
+    self.frets.append(DataTypes.Fret.new(self.top_left_point, self.bottom_left_point))
 
     # Current fret x from which we calculate next fret position
     var last_fret_x = self.top_left_point.x
@@ -121,13 +107,13 @@ func calculate_frets():
             self.bottom_left_point,
             self.bottom_right_point - self.bottom_left_point)
 
-        self.frets.append(Fret.new(top_intersection, bottom_intersection))
+        self.frets.append(DataTypes.Fret.new(top_intersection, bottom_intersection))
 
         # New fretboard scale len to use in the formula
         scale_len -= distance_from_last_fret
         last_fret_x = current_fret_x
 
-func calculate_strings():
+func __calculate_strings():
     var fretboad_left_width = self.bottom_left_point.y - self.top_left_point.y
     var fretboad_right_width = self.bottom_right_point.y - self.top_right_point.y
 
@@ -142,17 +128,20 @@ func calculate_strings():
     var current_left_pos = self.top_left_point + Vector2(0, string_margin)
     var current_right_pos = self.top_right_point + Vector2(0, string_margin)
     for i in range(6):
-        self.strings.append(AString.new(current_left_pos, current_right_pos))
+        self.strings.append(DataTypes.AString.new(current_left_pos, current_right_pos))
 
         current_left_pos += Vector2(0, left_distance)
         current_right_pos += Vector2(0, right_distance)
 
-func detect_current_highlited_note(mouse_position: Vector2) -> Note:
+# Detect highlited note. Return [] if out of bounds, or [string, fret, position]
+func __detect_current_highlited_note(mouse_position: Vector2) -> DataTypes.FretboardPosition:
     if not Geometry2D.is_point_in_polygon(mouse_position, self.out_of_bounds_polygon):
         return null
 
-    var fret_search = func(fret: Fret, mpos_x: Fret): return fret.top_point.x < mpos_x.top_point.x
-    var string_search = func(string: AString, mpos_y: AString): return string.left_point.y < mpos_y.left_point.y
+    var fret_search = func(fret: DataTypes.Fret, mpos_x: DataTypes.Fret):
+        return fret.top_point.x < mpos_x.top_point.x
+    var string_search = func(string: DataTypes.AString, mpos_y: DataTypes.AString):
+        return string.left_point.y < mpos_y.left_point.y
 
     var first_line_is_closer = func(line1_start, line1_end, line2_start, line2_end) -> bool:
         var first_point = Geometry2D.get_closest_point_to_segment_uncapped(mouse_position, line1_start, line1_end)
@@ -166,8 +155,8 @@ func detect_current_highlited_note(mouse_position: Vector2) -> Note:
     # position is closer to the previous entity
 
     # Next to mouse fret and string
-    var fret = self.frets.bsearch_custom(Fret.new(mouse_position, mouse_position), fret_search)
-    var string = self.strings.bsearch_custom(AString.new(mouse_position, mouse_position), string_search)
+    var fret = self.frets.bsearch_custom(DataTypes.Fret.new(mouse_position, mouse_position), fret_search)
+    var string = self.strings.bsearch_custom(DataTypes.AString.new(mouse_position, mouse_position), string_search)
 
     # Cap to the last string and fret
     fret = min(fret, self.frets.size() - 1)
@@ -195,9 +184,9 @@ func detect_current_highlited_note(mouse_position: Vector2) -> Note:
 
     queue_redraw()
 
-    return Note.new(string, fret, intersection)
+    return DataTypes.FretboardPosition.new(string, fret, intersection)
 
-func draw_fretboard():
+func __draw_fretboard():
     draw_colored_polygon([self.top_left_point, self.top_right_point,
                    self.bottom_right_point, self.bottom_left_point,
                    self.top_left_point],
@@ -211,16 +200,16 @@ func draw_fretboard():
         true)
 
 # Draw frets. vectors are used to detect intersections with frets
-func draw_frets():
+func __draw_frets():
     for i in range(1, self.frets.size()):
         var fret = self.frets[i]
         draw_line(fret.top_point, fret.bottom_point, Color(.4, .4, .4), 3, true)
 
-func draw_zero_fret():
+func __draw_zero_fret():
     var fret = self.frets[0]
     draw_line(fret.top_point, fret.bottom_point, Color(.8, .8, .8), 7, true)
 
-func draw_markers():
+func __draw_markers():
     # Marker margin from one side
     var marker_margin = Vector2(1./4, 2./12)
 
@@ -250,7 +239,7 @@ func draw_markers():
     draw_double_dot.call(Rect2(self.frets[11].top_point,
                        self.frets[12].bottom_point - self.frets[11].top_point))
 
-func draw_strings():
+func __draw_strings():
     # Strings width from thinner to thicker
     var strings_width = [1., 1.1, 1.2, 1.5, 2, 3]
     # String colors from thinner to thicker
@@ -269,9 +258,3 @@ func draw_strings():
         # Draw string
         draw_line(self.strings[i].left_point, self.strings[i].right_point,
                   string_colors[i], strings_width[i] / 2, true)
-
-func draw_hovered_note():
-    if not self.current_note:
-        return
-
-    draw_circle(self.current_note.position, 7, Color(1, 1, 1, 0.6))
