@@ -31,3 +31,7 @@ func _to_string():
 func shift(steps: int) -> Note:
     @warning_ignore("integer_division")
     return Note.new((self.note + steps) % 12, self.octave + (self.note + steps) / 12)
+
+func is_same_note(other: Note) -> bool:
+    return self.note == other.note
+

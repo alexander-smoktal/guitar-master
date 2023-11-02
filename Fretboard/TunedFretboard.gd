@@ -23,7 +23,10 @@ func _ready():
 func __on_note_clicked(string: int, fret: int):
     var clicked_note = string_notes[string].shift(fret)
 
-    if test_scale.contains_note(clicked_note):
-        self.visual_fretboard.highlight_note(string, fret, GlobalColors.COLOR_OK)
+    if test_scale.contains(clicked_note):
+        if test_scale.root().is_same_note(clicked_note):
+            self.visual_fretboard.highlight_note(string, fret, GlobalColors.COLOR_ROOT)
+        else:
+            self.visual_fretboard.highlight_note(string, fret, GlobalColors.COLOR_OK)
     else:
         self.visual_fretboard.blink_note(string, fret, GlobalColors.COLOR_ERROR)
