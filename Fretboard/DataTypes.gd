@@ -16,7 +16,7 @@ class AString:
         self.left_point = a_left_point
         self.right_point = a_right_point
 
-class Note:
+class HighlightedNote:
     var string: int
     var fret: int
     var highlight: NoteHighlight

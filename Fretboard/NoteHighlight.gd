@@ -38,6 +38,7 @@ func _ready() -> void:
 
 func __change_alpha(alpha: float):
     self.color.a = alpha
+    self.outline_color.a = alpha
     queue_redraw()
 
 func __change_color(a_color: Color):

@@ -25,8 +25,16 @@ var inlay_texture: Texture2D = load("res://Sprites/common_inlay.png")
 var twelve_inlay_texture: Texture2D = load("res://Sprites/12_inlay.png")
 
 # Current
-var current_note: DataTypes.Note
+var current_note: DataTypes.HighlightedNote
 var highlights: Array[NoteHighlight]
+
+signal note_clicked(string: int, fret: int)
+
+# Highlight note with a dot
+func highlight_note(string: int, fret: int, color: Color):
+    var node_highlight = NoteHighlight.new(color, NoteHighlight.HighLightType.BLINK)
+    node_highlight.set_position(current_note.position())
+    self.add_child(node_highlight)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -54,11 +62,9 @@ func _ready():
 
 func _input(event):
     # Mouse in viewport coordinates.
-    if event is InputEventMouseButton and current_note:
-        var node_highlight = NoteHighlight.new(Color(0.5, 1, 0.3), NoteHighlight.HighLightType.BLINK)
-        node_highlight.set_position(current_note.position())
-
-        self.add_child(node_highlight)
+    if event is InputEventMouseButton and (event as InputEventMouseButton).pressed and current_note:
+        # String counts backwards
+        self.note_clicked.emit(6 - current_note.string, current_note.fret)
     elif event is InputEventMouseMotion:
         var hovered_position = __detect_current_highlited_note(event.position)
 
@@ -71,7 +77,7 @@ func _input(event):
 
         # Else create or update marker
         if not self.current_note:
-            self.current_note = DataTypes.Note.new(self)
+            self.current_note = DataTypes.HighlightedNote.new(self)
         self.current_note.move(hovered_position.string, hovered_position.fret, hovered_position.position)
 
 func _draw():
@@ -217,16 +223,22 @@ func __draw_markers():
         var pos = square_bw_frets.position + square_bw_frets.size * marker_margin
         var size = square_bw_frets.size * (Vector2.ONE - marker_margin * 2)
 
-        draw_texture_rect(self.inlay_texture, Rect2(pos, size), false, Color(.9, .9, .9))
+        draw_rect(Rect2(pos, size), Color(.9, .9, .9))
 
     var draw_double_dot = func(square_bw_frets: Rect2):
         # Make 12 fret a bit longer
-        var twelve_margin = marker_margin * Vector2(1, 0.5)
+        var twelve_margin = marker_margin * Vector2(1., 0.7)
 
         var pos = square_bw_frets.position + square_bw_frets.size * twelve_margin
+        # Total markers size
         var size = square_bw_frets.size * (Vector2.ONE - twelve_margin * 2)
+        # Single marker size
+        var single_marker_size = Vector2(size.x, size.y * 0.45)
 
-        draw_texture_rect(self.twelve_inlay_texture, Rect2(pos, size), false, Color(.9, .9, .9))
+        # Top square
+        draw_rect(Rect2(pos, single_marker_size), Color(.9, .9, .9))
+        # Bottom square
+        draw_rect(Rect2(pos + size, -single_marker_size), Color(.9, .9, .9))
 
     var indices_to_draw = [3, 5, 7, 9, 15, 17, 19, 21]
 
