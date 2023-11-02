@@ -6,12 +6,12 @@ var visual_fretboard: Fretboard
 var player: AudioStreamPlayer
 
 var string_notes: Array[Note] = [null,
-    Note.new(Note.E, 0),
-    Note.new(Note.A, 0),
-    Note.new(Note.D, 1),
-    Note.new(Note.G, 1),
-    Note.new(Note.B, 1),
-    Note.new(Note.E, 2)]
+    Note.new(Note.E, 2),
+    Note.new(Note.A, 2),
+    Note.new(Note.D, 3),
+    Note.new(Note.G, 3),
+    Note.new(Note.B, 3),
+    Note.new(Note.E, 4)]
 
 var test_scale = Scale.minor_pentatonic(Note.new(Note.A, 0))
 
