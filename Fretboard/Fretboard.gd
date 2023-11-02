@@ -8,8 +8,8 @@ const DataTypes = preload("res://Fretboard/DataTypes.gd")
 const BOARD_WIDTH = 0.15
 # Board margin in pixels
 const BOARD_MARGIN = 30
-const NUM_FRETS = 24
-const FRET_POSITION_DIVIDER = 17.817
+const NUM_FRETS = 22
+const FRET_POSITION_DIVIDER = 16
 
 var frets: Array[DataTypes.Fret]
 var strings: Array[DataTypes.AString]

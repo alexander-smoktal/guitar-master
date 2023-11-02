@@ -36,8 +36,7 @@ static var sounds = {
     'E5': load('res://Sounds/E5.ogg'), 'F5': load('res://Sounds/F5.ogg'), 'F#5': load('res://Sounds/F#5.ogg'),
     'G5': load('res://Sounds/G5.ogg'), 'G#5': load('res://Sounds/G#5.ogg'), 'A5': load('res://Sounds/A5.ogg'),
     'A#5': load('res://Sounds/A#5.ogg'), 'B5': load('res://Sounds/B5.ogg'), 'C6': load('res://Sounds/C6.ogg'),
-    'C#6': load('res://Sounds/C6.ogg'), 'D6': load('res://Sounds/C6.ogg'), 'D#6': load('res://Sounds/C6.ogg'),
-    'E6': load('res://Sounds/C6.ogg'),
+    'C#6': load('res://Sounds/C#6.ogg'), 'D6': load('res://Sounds/D6.ogg'),
 }
 
 func _init(a_note: int, an_octave):
