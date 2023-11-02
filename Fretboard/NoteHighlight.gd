@@ -46,7 +46,7 @@ func __change_color(a_color: Color):
     queue_redraw()
 
 func _draw():
-    var radius = 12
+    var radius = 11
 
     draw_circle(Vector2(0, 0), radius, self.color)
     draw_arc(Vector2(0, 0), radius, 0, TAU, 30, self.outline_color, 1, true)
