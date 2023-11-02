@@ -26,4 +26,4 @@ func __on_note_clicked(string: int, fret: int):
     if test_scale.contains_note(clicked_note):
         self.visual_fretboard.highlight_note(string, fret, GlobalColors.COLOR_OK)
     else:
-        self.visual_fretboard.highlight_note(string, fret, GlobalColors.COLOR_ERROR)
+        self.visual_fretboard.blink_note(string, fret, GlobalColors.COLOR_ERROR)

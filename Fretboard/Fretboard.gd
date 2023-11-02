@@ -21,9 +21,6 @@ var bottom_right_point: Vector2
 # Polygon which we use to highlight mouse position event if mouse is out of the fretboard boundaries
 var out_of_bounds_polygon: PackedVector2Array
 
-var inlay_texture: Texture2D = load("res://Sprites/common_inlay.png")
-var twelve_inlay_texture: Texture2D = load("res://Sprites/12_inlay.png")
-
 # Current
 var current_note: DataTypes.HighlightedNote
 var highlights: Array[NoteHighlight]
@@ -32,8 +29,32 @@ signal note_clicked(string: int, fret: int)
 
 # Highlight note with a dot
 func highlight_note(string: int, fret: int, color: Color):
+    # convert to intenal string
+    var self_string = 6 - string
+
+    var intersection = Geometry2D.line_intersects_line(
+        self.frets[fret].top_point,
+        Vector2(0, 1),
+        self.strings[self_string].left_point,
+        self.strings[self_string].right_point - self.strings[self_string].left_point)
+
+    var node_highlight = NoteHighlight.new(color, NoteHighlight.HighLightType.PERSISTENT)
+    node_highlight.set_position(intersection)
+    self.add_child(node_highlight)
+
+# Highlight note with a dot
+func blink_note(string: int, fret: int, color: Color):
+    # convert to intenal string
+    var self_string = 6 - string
+
+    var intersection = Geometry2D.line_intersects_line(
+        self.frets[fret].top_point,
+        Vector2(0, 1),
+        self.strings[self_string].left_point,
+        self.strings[self_string].right_point - self.strings[self_string].left_point)
+
     var node_highlight = NoteHighlight.new(color, NoteHighlight.HighLightType.BLINK)
-    node_highlight.set_position(current_note.position())
+    node_highlight.set_position(intersection)
     self.add_child(node_highlight)
 
 # Called when the node enters the scene tree for the first time.
