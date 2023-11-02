@@ -20,6 +20,7 @@ enum {
 var note: int
 var octave: int
 
+var note_sequence: AudioStreamOggVorbis = load('res://Sounds/E_2.ogg')
 
 func _init(a_note: int, an_octave):
     self.note = a_note
@@ -34,4 +35,8 @@ func shift(steps: int) -> Note:
 
 func is_same_note(other: Note) -> bool:
     return self.note == other.note
+
+func play_sound(a_player: AudioStreamPlayer):
+    a_player.set_stream(note_sequence)
+    a_player.play()
 

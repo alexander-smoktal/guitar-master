@@ -3,6 +3,7 @@ class_name TunedFretboard
 extends Node2D
 
 var visual_fretboard: Fretboard
+var player: AudioStreamPlayer
 
 var string_notes: Array[Note] = [null,
     Note.new(Note.E, 0),
@@ -20,8 +21,13 @@ func _ready():
     self.visual_fretboard.note_clicked.connect(self.__on_note_clicked)
     self.add_child(self.visual_fretboard)
 
+    self.player = AudioStreamPlayer.new()
+    self.add_child(player)
+
 func __on_note_clicked(string: int, fret: int):
     var clicked_note = string_notes[string].shift(fret)
+
+    clicked_note.play_sound(self.player)
 
     if test_scale.contains(clicked_note):
         if test_scale.root().is_same_note(clicked_note):
