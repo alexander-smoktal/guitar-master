@@ -46,12 +46,18 @@ func _init(a_note: int, an_octave):
 func _to_string():
     return "%s%d" % [NOTES_STRINGS[self.note], self.octave]
 
+func note_string():
+    return "%s" % NOTES_STRINGS[self.note]
+
 func shift(steps: int) -> Note:
     @warning_ignore("integer_division")
     return Note.new((self.note + steps) % 12, self.octave + (self.note + steps) / 12)
 
 func is_same_note(other: Note) -> bool:
     return self.note == other.note
+
+func equal(other: Note) -> bool:
+    return self.note == other.note and self.octave == other.octave
 
 func play_sound(a_player: AudioStreamPlayer):
     var sound = Note.sounds[self._to_string()]

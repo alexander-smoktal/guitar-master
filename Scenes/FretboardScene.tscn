@@ -1,8 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://cgcna7e5haoj3"]
+[gd_scene load_steps=3 format=3 uid="uid://cgcna7e5haoj3"]
 
+[ext_resource type="Script" path="res://Scenes/FretboardScene.gd" id="1_8ynuw"]
 [ext_resource type="Script" path="res://Controls/Fretboard/TunedFretboard.gd" id="1_pp31d"]
 
 [node name="FretboardScene" type="Node2D"]
+script = ExtResource("1_8ynuw")
 metadata/_edit_group_ = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -53,6 +55,7 @@ size_flags_vertical = 3
 [node name="BackButton" type="Button" parent="CanvasLayer/MarginContainer/MainContainer/HBoxContainer"]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
+focus_mode = 0
 theme_override_font_sizes/font_size = 26
 text = "BUTTON_BACK"
 
@@ -62,13 +65,13 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
 theme_override_font_sizes/font_size = 28
-text = "CURRENT_NOTE"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="NextButton" type="Button" parent="CanvasLayer/MarginContainer/MainContainer/HBoxContainer"]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
+focus_mode = 0
 theme_override_font_sizes/font_size = 26
 disabled = true
 text = "BUTTON_NEXT"

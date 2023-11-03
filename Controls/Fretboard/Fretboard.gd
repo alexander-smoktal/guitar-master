@@ -55,6 +55,9 @@ func blink_note(string: int, fret: int, color: Color):
     node_highlight.set_position(intersection)
     self.add_child(node_highlight)
 
+func reset():
+    pass
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
     var view_size = get_viewport().get_visible_rect().size
