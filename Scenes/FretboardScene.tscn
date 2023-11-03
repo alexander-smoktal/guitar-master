@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://cgcna7e5haoj3"]
+[gd_scene load_steps=4 format=3 uid="uid://cgcna7e5haoj3"]
 
 [ext_resource type="Script" path="res://Scenes/FretboardScene.gd" id="1_8ynuw"]
 [ext_resource type="Script" path="res://Controls/Fretboard/TunedFretboard.gd" id="1_pp31d"]
+[ext_resource type="Theme" uid="uid://cfm2stic5l35d" path="res://Theme.tres" id="3_lh14w"]
 
 [node name="FretboardScene" type="Node2D"]
 script = ExtResource("1_8ynuw")
@@ -56,6 +57,7 @@ size_flags_vertical = 3
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 focus_mode = 0
+theme = ExtResource("3_lh14w")
 theme_override_font_sizes/font_size = 26
 text = "BUTTON_BACK"
 
@@ -72,6 +74,7 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 focus_mode = 0
+theme = ExtResource("3_lh14w")
 theme_override_font_sizes/font_size = 26
 disabled = true
 text = "BUTTON_NEXT"
