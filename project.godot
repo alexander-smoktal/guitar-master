@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="GuitarMaster"
-run/main_scene="res://Fretboard/FretboardScene.tscn"
+run/main_scene="res://Scenes/FretboardScene.tscn"
 config/features=PackedStringArray("4.1", "Mobile")
 config/icon="res://icon.svg"
 
@@ -20,6 +20,11 @@ config/icon="res://icon.svg"
 window/size/viewport_width=1600
 window/size/viewport_height=900
 window/stretch/mode="canvas_items"
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://I13n/English.po")
+locale/test="en"
 
 [rendering]
 

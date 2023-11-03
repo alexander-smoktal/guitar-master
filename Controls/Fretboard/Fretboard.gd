@@ -1,13 +1,11 @@
 class_name Fretboard
 
-extends Node2D
+extends Control
 
-const DataTypes = preload("res://Fretboard/DataTypes.gd")
+const DataTypes = preload("res://Controls/Fretboard/DataTypes.gd")
 
 # Board width in fraction of viewport height
-const BOARD_WIDTH = 0.15
-# Board margin in pixels
-const BOARD_MARGIN = 30
+const BOARD_WIDTH = 0.25
 const NUM_FRETS = 22
 const FRET_POSITION_DIVIDER = 16
 
@@ -61,25 +59,7 @@ func blink_note(string: int, fret: int, color: Color):
 func _ready():
     var view_size = get_viewport().get_visible_rect().size
 
-    var thin_fretboard_width = view_size.y * BOARD_WIDTH
-    var thick_fretboard_width = thin_fretboard_width * 1.2
-
-    self.top_left_point = Vector2(BOARD_MARGIN, (view_size.y  - thin_fretboard_width) / 2)
-    self.top_right_point = Vector2(view_size.x - BOARD_MARGIN, (view_size.y  - thick_fretboard_width) / 2)
-    self.bottom_left_point = Vector2(BOARD_MARGIN, (view_size.y  + thin_fretboard_width) / 2)
-    self.bottom_right_point = Vector2(view_size.x - BOARD_MARGIN, (view_size.y  + thick_fretboard_width) / 2)
-
-    # Mouse radiuse out of fretboard, which we still use to calculate closest fretboard position
-    var out_of_bounds_mouse_radius = thin_fretboard_width / 5
-    self.out_of_bounds_polygon = [
-        self.top_left_point + Vector2(-out_of_bounds_mouse_radius, -out_of_bounds_mouse_radius),
-        self.top_right_point + Vector2(out_of_bounds_mouse_radius, -out_of_bounds_mouse_radius),
-        self.bottom_right_point + Vector2(out_of_bounds_mouse_radius, out_of_bounds_mouse_radius),
-        self.bottom_left_point + Vector2(-out_of_bounds_mouse_radius, out_of_bounds_mouse_radius),
-    ]
-
-    self.__calculate_frets()
-    self.__calculate_strings()
+    self.__resize(view_size)
 
 func _input(event):
     # Mouse in viewport coordinates.
@@ -87,7 +67,7 @@ func _input(event):
         # String counts backwards
         self.note_clicked.emit(6 - current_note.string, current_note.fret)
     elif event is InputEventMouseMotion:
-        var hovered_position = __detect_current_highlited_note(event.position)
+        var hovered_position = __detect_current_highlited_note(event.position - self.global_position)
 
         # If out of bound, clear nighlight marker
         if not hovered_position:
@@ -101,6 +81,11 @@ func _input(event):
             self.current_note = DataTypes.HighlightedNote.new(self)
         self.current_note.move(hovered_position.string, hovered_position.fret, hovered_position.position)
 
+func _notification(what):
+    match what:
+        NOTIFICATION_RESIZED:
+            self.__resize(self.size)
+
 func _draw():
     self.__draw_fretboard()
     self.__draw_markers()
@@ -108,7 +93,30 @@ func _draw():
     self.__draw_strings()
     self.__draw_zero_fret()
 
+func __resize(new_size: Vector2):
+    var thin_fretboard_width = new_size.y * BOARD_WIDTH
+    var thick_fretboard_width = thin_fretboard_width * 1.2
+
+    self.top_left_point = Vector2(0, (new_size.y  - thin_fretboard_width) / 2)
+    self.top_right_point = Vector2(new_size.x, (new_size.y  - thick_fretboard_width) / 2)
+    self.bottom_left_point = Vector2(0, (new_size.y  + thin_fretboard_width) / 2)
+    self.bottom_right_point = Vector2(new_size.x, (new_size.y  + thick_fretboard_width) / 2)
+
+    # Mouse radiuse out of fretboard, which we still use to calculate closest fretboard position
+    var out_of_bounds_mouse_radius = thin_fretboard_width / 5
+    self.out_of_bounds_polygon = [
+        self.top_left_point + Vector2(-out_of_bounds_mouse_radius, -out_of_bounds_mouse_radius),
+        self.top_right_point + Vector2(out_of_bounds_mouse_radius, -out_of_bounds_mouse_radius),
+        self.bottom_right_point + Vector2(out_of_bounds_mouse_radius, out_of_bounds_mouse_radius),
+        self.bottom_left_point + Vector2(-out_of_bounds_mouse_radius, out_of_bounds_mouse_radius),
+    ]
+
+    self.__calculate_frets()
+    self.__calculate_strings()
+
 func __calculate_frets():
+    self.frets = []
+
     var fretboard_width = (self.top_right_point.x - self.top_left_point.x)
     var scale_len = fretboard_width * 1.31
 
@@ -141,6 +149,8 @@ func __calculate_frets():
         last_fret_x = current_fret_x
 
 func __calculate_strings():
+    self.strings = []
+
     var fretboad_left_width = self.bottom_left_point.y - self.top_left_point.y
     var fretboad_right_width = self.bottom_right_point.y - self.top_right_point.y
 
@@ -242,9 +252,9 @@ func __draw_markers():
 
     var draw_dot = func(square_bw_frets: Rect2):
         var pos = square_bw_frets.position + square_bw_frets.size * marker_margin
-        var size = square_bw_frets.size * (Vector2.ONE - marker_margin * 2)
+        var rect_size = square_bw_frets.size * (Vector2.ONE - marker_margin * 2)
 
-        draw_rect(Rect2(pos, size), Color(.9, .9, .9))
+        draw_rect(Rect2(pos, rect_size), Color(.9, .9, .9))
 
     var draw_double_dot = func(square_bw_frets: Rect2):
         # Make 12 fret a bit longer
@@ -252,14 +262,14 @@ func __draw_markers():
 
         var pos = square_bw_frets.position + square_bw_frets.size * twelve_margin
         # Total markers size
-        var size = square_bw_frets.size * (Vector2.ONE - twelve_margin * 2)
+        var rect_size = square_bw_frets.size * (Vector2.ONE - twelve_margin * 2)
         # Single marker size
-        var single_marker_size = Vector2(size.x, size.y * 0.45)
+        var single_marker_size = Vector2(rect_size.x, rect_size.y * 0.45)
 
         # Top square
         draw_rect(Rect2(pos, single_marker_size), Color(.9, .9, .9))
         # Bottom square
-        draw_rect(Rect2(pos + size, -single_marker_size), Color(.9, .9, .9))
+        draw_rect(Rect2(pos + rect_size, -single_marker_size), Color(.9, .9, .9))
 
     var indices_to_draw = [3, 5, 7, 9, 15, 17, 19, 21]
 

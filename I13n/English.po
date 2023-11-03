@@ -1,0 +1,17 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Guitar Master\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "PICK_A_NOTE"
+msgstr "Pick all %s notes"
+
+msgid "BUTTON_NEXT"
+msgstr "Next"
+
+msgid "BUTTON_BACK"
+msgstr "Back"

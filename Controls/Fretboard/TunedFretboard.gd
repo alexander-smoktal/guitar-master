@@ -1,6 +1,6 @@
 class_name TunedFretboard
 
-extends Node2D
+extends Control
 
 var visual_fretboard: Fretboard
 var player: AudioStreamPlayer
@@ -36,3 +36,8 @@ func __on_note_clicked(string: int, fret: int):
             self.visual_fretboard.highlight_note(string, fret, GlobalColors.COLOR_OK)
     else:
         self.visual_fretboard.blink_note(string, fret, GlobalColors.COLOR_ERROR)
+
+func _notification(what):
+    match what:
+        NOTIFICATION_RESIZED:
+            self.visual_fretboard.set_size(self.size)
