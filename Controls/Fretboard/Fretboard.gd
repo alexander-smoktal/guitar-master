@@ -20,7 +20,7 @@ var bottom_right_point: Vector2
 var out_of_bounds_polygon: PackedVector2Array
 
 # Current
-var current_note: DataTypes.HighlightedNote
+var current_note: DataTypes.HoveredNote
 var highlights: Array[NoteHighlight]
 
 signal note_clicked(string: int, fret: int)
@@ -38,7 +38,10 @@ func highlight_note(string: int, fret: int, color: Color):
 
     var node_highlight = NoteHighlight.new(color, NoteHighlight.HighLightType.PERSISTENT)
     node_highlight.set_position(intersection)
+    node_highlight.set_z_index(10)
     self.add_child(node_highlight)
+
+    self.highlights.append(node_highlight)
 
 # Highlight note with a dot
 func blink_note(string: int, fret: int, color: Color):
@@ -56,7 +59,9 @@ func blink_note(string: int, fret: int, color: Color):
     self.add_child(node_highlight)
 
 func reset():
-    pass
+    for a_highlights in self.highlights:
+        a_highlights.queue_free()
+    self.highlights = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -81,7 +86,7 @@ func _input(event):
 
         # Else create or update marker
         if not self.current_note:
-            self.current_note = DataTypes.HighlightedNote.new(self)
+            self.current_note = DataTypes.HoveredNote.new(self)
         self.current_note.move(hovered_position.string, hovered_position.fret, hovered_position.position)
 
 func _notification(what):

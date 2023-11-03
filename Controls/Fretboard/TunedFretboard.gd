@@ -50,7 +50,7 @@ func __on_note_clicked(string: int, fret: int):
     else:
         self.visual_fretboard.blink_note(string, fret, GlobalColors.COLOR_ERROR)
 
-func new_scale(a_scale: Scale):
+func reset(a_scale: Scale):
     # Clean previous highlights
     self.visual_fretboard.reset()
     self.self_scale = a_scale

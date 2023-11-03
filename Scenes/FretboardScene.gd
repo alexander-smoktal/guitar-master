@@ -10,7 +10,7 @@ var status_label = $CanvasLayer/MarginContainer/MainContainer/HBoxContainer/Stat
 var next_button = $CanvasLayer/MarginContainer/MainContainer/HBoxContainer/NextButton as Button
 
 func reset(a_scale: Scale, task: String):
-    self.fretboard.new_scale(a_scale)
+    self.fretboard.reset(a_scale)
     self.task_label.set_text(task)
 
 # Called when the node enters the scene tree for the first time.
