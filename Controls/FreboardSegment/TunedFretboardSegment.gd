@@ -2,7 +2,7 @@ class_name TunedFretboard
 
 extends Control
 
-var visual_fretboard: Fretboard
+var visual_fretboard: FretboardSegment
 var player: AudioStreamPlayer
 
 var string_notes: Array[Note] = [null,
@@ -24,7 +24,8 @@ signal completed(note: Note)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-    self.visual_fretboard = Fretboard.new()
+    self.visual_fretboard = FretboardSegment.new()
+    self.visual_fretboard.reset(4, 0)
     self.visual_fretboard.note_clicked.connect(self.__on_note_clicked)
     self.add_child(self.visual_fretboard)
 
@@ -51,7 +52,7 @@ func __on_note_clicked(string: int, fret: int):
 
 func reset(a_scale: Scale):
     # Clean previous highlights
-    self.visual_fretboard.reset()
+    self.visual_fretboard.reset(4, 0)
     self.self_scale = a_scale
     self.reset_notes_to_click()
 

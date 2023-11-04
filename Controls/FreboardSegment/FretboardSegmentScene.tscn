@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://trvat0k6lgc4"]
 
-[ext_resource type="Script" path="res://Controls/FreboardSegment/Segment.gd" id="1_yho4g"]
+[ext_resource type="Script" path="res://Controls/FreboardSegment/TunedFretboardSegment.gd" id="1_vuok0"]
 [ext_resource type="Theme" uid="uid://cfm2stic5l35d" path="res://Theme.tres" id="3_4y1iq"]
 
 [node name="FretboardScene" type="Node2D"]
@@ -42,7 +42,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
-script = ExtResource("1_yho4g")
+script = ExtResource("1_vuok0")
 
 [node name="HSeparator2" type="HSeparator" parent="CanvasLayer/MarginContainer/MainContainer"]
 layout_mode = 2

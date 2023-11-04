@@ -308,14 +308,14 @@ func __draw_markers():
     # Draw regular dot
     for i in range(self.first_fret_num, self.first_fret_num + self.num_frets):
         # Index of the fret in self array
-        var self_fret_index = i - self.first_fret_num + 1
+        var self_fret_index = i - self.first_fret_num
         if i == 11:
             # Draw 12 fret dot
-            draw_double_dot.call(Rect2(self.frets[self_fret_index - 1].top_point,
-                            self.frets[self_fret_index].bottom_point - self.frets[self_fret_index - 1].top_point))
+            draw_double_dot.call(Rect2(self.frets[self_fret_index].top_point,
+                            self.frets[self_fret_index + 1].bottom_point - self.frets[self_fret_index].top_point))
         elif (i + 1) in indices_to_draw:
-            draw_dot.call(Rect2(self.frets[self_fret_index - 1].top_point,
-                        self.frets[self_fret_index].bottom_point - self.frets[self_fret_index - 1].top_point))
+            draw_dot.call(Rect2(self.frets[self_fret_index].top_point,
+                        self.frets[self_fret_index + 1].bottom_point - self.frets[self_fret_index].top_point))
 
 func __draw_strings():
     # Strings width from thinner to thicker
