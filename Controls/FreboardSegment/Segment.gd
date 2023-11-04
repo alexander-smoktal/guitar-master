@@ -1,13 +1,13 @@
-class_name Fretboard
+class_name FretboardSegment
 
 extends Control
 
 const DataTypes = preload("res://Controls/DataTypes.gd")
 
-# Board width in fraction of viewport height
-const BOARD_WIDTH = 0.25
-const NUM_FRETS = 22
-const FRET_POSITION_DIVIDER = 16
+# Board width in fraction of self control height
+const BOARD_WIDTH = 0.5
+# Fret width as a fraction of the fretboard width
+const FRET_WIDTH = 0.5
 
 var frets: Array[DataTypes.Fret]
 var strings: Array[DataTypes.AString]
@@ -22,6 +22,9 @@ var out_of_bounds_polygon: PackedVector2Array
 # Current
 var current_note: DataTypes.HoveredNote
 var highlights: Array[NoteHighlight]
+
+var num_frets: int = 6
+var first_fret_num: int = 8
 
 signal note_clicked(string: int, fret: int)
 
@@ -58,10 +61,15 @@ func blink_note(string: int, fret: int, color: Color):
     node_highlight.set_position(intersection)
     self.add_child(node_highlight)
 
-func reset():
+func reset(new_num_frets: int, a_first_fret_num: int):
+    self.num_frets = new_num_frets
+    self.first_fret_num = a_first_fret_num
+
     for a_highlights in self.highlights:
         a_highlights.queue_free()
     self.highlights = []
+
+    self.__resize(self.size)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -100,18 +108,21 @@ func _draw():
     self.__draw_frets()
     self.__draw_strings()
     self.__draw_zero_fret()
+    self.__draw_fret_num()
 
 func __resize(new_size: Vector2):
-    var thin_fretboard_width = new_size.y * BOARD_WIDTH
-    var thick_fretboard_width = thin_fretboard_width * 1.2
+    # Fretboard width
+    var fretboard_width = new_size.y * BOARD_WIDTH
+    # Total fretboard length
+    var fretboard_length = fretboard_width * FRET_WIDTH * self.num_frets
 
-    self.top_left_point = Vector2(0, (new_size.y  - thin_fretboard_width) / 2)
-    self.top_right_point = Vector2(new_size.x, (new_size.y  - thick_fretboard_width) / 2)
-    self.bottom_left_point = Vector2(0, (new_size.y  + thin_fretboard_width) / 2)
-    self.bottom_right_point = Vector2(new_size.x, (new_size.y  + thick_fretboard_width) / 2)
+    self.top_left_point = Vector2((new_size.x - fretboard_length) / 2, (new_size.y  - fretboard_width) / 2)
+    self.top_right_point = Vector2((new_size.x  + fretboard_length) / 2, (new_size.y  - fretboard_width) / 2)
+    self.bottom_left_point = Vector2((new_size.x - fretboard_length) / 2, (new_size.y  + fretboard_width) / 2)
+    self.bottom_right_point = Vector2((new_size.x + fretboard_length) / 2, (new_size.y  + fretboard_width) / 2)
 
     # Mouse radiuse out of fretboard, which we still use to calculate closest fretboard position
-    var out_of_bounds_mouse_radius = thin_fretboard_width / 5
+    var out_of_bounds_mouse_radius = fretboard_width / 5
     self.out_of_bounds_polygon = [
         self.top_left_point + Vector2(-out_of_bounds_mouse_radius, -out_of_bounds_mouse_radius),
         self.top_right_point + Vector2(out_of_bounds_mouse_radius, -out_of_bounds_mouse_radius),
@@ -122,38 +133,39 @@ func __resize(new_size: Vector2):
     self.__calculate_frets()
     self.__calculate_strings()
 
+    if self.current_note:
+        self.current_note.clear()
+        self.current_note = null
+
 func __calculate_frets():
     self.frets = []
 
-    var fretboard_width = (self.top_right_point.x - self.top_left_point.x)
-    var scale_len = fretboard_width * 1.31
+    var fretboard_width = (self.bottom_left_point.y - self.top_left_point.y)
+    # Distance between frets
+    var fret_distance = fretboard_width * FRET_WIDTH
 
     #Add zero fret
     self.frets.append(DataTypes.Fret.new(self.top_left_point, self.bottom_left_point))
 
     # Current fret x from which we calculate next fret position
     var last_fret_x = self.top_left_point.x
-    for i in range(NUM_FRETS):
-        # Calculate fret X. It's based on a formulae from the Internet 😅
-        # See here https://www.liutaiomottola.com/formulae/fret.htm
-        var distance_from_last_fret = scale_len / FRET_POSITION_DIVIDER
-        var current_fret_x  = last_fret_x + distance_from_last_fret
+    for i in self.num_frets:
+        var current_fret_x  = last_fret_x + fret_distance
 
         # Calculate fret edges
         var top_intersection = Geometry2D.line_intersects_line(Vector2(current_fret_x, 0),
             Vector2(0, 1),
             self.top_left_point,
-            self.top_right_point - self.top_left_point)
+            Vector2(1, 0))
 
         var bottom_intersection = Geometry2D.line_intersects_line(Vector2(current_fret_x, 0),
             Vector2(0, 1),
             self.bottom_left_point,
-            self.bottom_right_point - self.bottom_left_point)
+            Vector2(1, 0))
 
         self.frets.append(DataTypes.Fret.new(top_intersection, bottom_intersection))
 
         # New fretboard scale len to use in the formula
-        scale_len -= distance_from_last_fret
         last_fret_x = current_fret_x
 
 func __calculate_strings():
@@ -246,13 +258,16 @@ func __draw_fretboard():
 
 # Draw frets. vectors are used to detect intersections with frets
 func __draw_frets():
-    for i in range(1, self.frets.size()):
+    for i in self.frets.size():
         var fret = self.frets[i]
-        draw_line(fret.top_point, fret.bottom_point, Color(.4, .4, .4), 3, true)
+        draw_line(fret.top_point, fret.bottom_point, Color(.4, .4, .4), 5, true)
 
 func __draw_zero_fret():
+    if self.first_fret_num != 0:
+        return
+
     var fret = self.frets[0]
-    draw_line(fret.top_point, fret.bottom_point, Color(.8, .8, .8), 7, true)
+    draw_line(fret.top_point, fret.bottom_point, Color(.8, .8, .8), 15, true)
 
 func __draw_markers():
     # Marker margin from one side
@@ -279,16 +294,28 @@ func __draw_markers():
         # Bottom square
         draw_rect(Rect2(pos + rect_size, -single_marker_size), Color(.9, .9, .9))
 
-    var indices_to_draw = [3, 5, 7, 9, 15, 17, 19, 21]
+    var indices_to_draw = {
+        3:  null,
+        5:  null,
+        7:  null,
+        9:  null,
+        15:  null,
+        17:  null,
+        19:  null,
+        21:  null
+        }
 
     # Draw regular dot
-    for i in indices_to_draw:
-        draw_dot.call(Rect2(self.frets[i - 1].top_point,
-                       self.frets[i].bottom_point - self.frets[i - 1].top_point))
-
-    # Draw 12 fret dot
-    draw_double_dot.call(Rect2(self.frets[11].top_point,
-                       self.frets[12].bottom_point - self.frets[11].top_point))
+    for i in range(self.first_fret_num, self.first_fret_num + self.num_frets):
+        # Index of the fret in self array
+        var self_fret_index = i - self.first_fret_num + 1
+        if i == 11:
+            # Draw 12 fret dot
+            draw_double_dot.call(Rect2(self.frets[self_fret_index - 1].top_point,
+                            self.frets[self_fret_index].bottom_point - self.frets[self_fret_index - 1].top_point))
+        elif (i + 1) in indices_to_draw:
+            draw_dot.call(Rect2(self.frets[self_fret_index - 1].top_point,
+                        self.frets[self_fret_index].bottom_point - self.frets[self_fret_index - 1].top_point))
 
 func __draw_strings():
     # Strings width from thinner to thicker
@@ -304,8 +331,18 @@ func __draw_strings():
     for i in range(6):
         # Draw shadow
         draw_line(self.strings[i].left_point, self.strings[i].right_point,
-                  Color(0, 0, 0, .5), strings_width[i] * 1.5, true)
+                  Color(0, 0, 0, .5), strings_width[i] * 2, true)
 
         # Draw string
         draw_line(self.strings[i].left_point, self.strings[i].right_point,
                   string_colors[i], strings_width[i] / 2, true)
+
+func __draw_fret_num():
+    var top_margin = 50
+
+    if self.first_fret_num == 0:
+        return
+
+    draw_char(get_theme_default_font(), self.bottom_left_point + Vector2(-10, top_margin),
+        "%d" % self.first_fret_num,
+        30, Color(.5, .5, .5))
