@@ -60,7 +60,7 @@ func __init_players(a_node: Node):
     for i in 6:
         var player = AudioStreamPlayer.new()
         # Make each sound quiter
-        player.set_volume_db(-10)
+        player.set_volume_db(-13)
         a_node.add_child(player)
         audio_players.append(player)
 
