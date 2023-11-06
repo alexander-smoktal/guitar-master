@@ -8,6 +8,7 @@ var color: Color
 var outline_color = Color.BLACK
 # If FADE_IN - a resulting color
 var result_color: Color
+var radius = 11
 
 var highlight_type: HighLightType
 
@@ -22,6 +23,9 @@ func _init(a_color: Color, a_highlight_type: HighLightType, a_result_color = Col
 
     self.color = a_color
     self.highlight_type = a_highlight_type
+
+func resize(a_radius: int):
+    self.radius = a_radius
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -46,7 +50,5 @@ func __change_color(a_color: Color):
     queue_redraw()
 
 func _draw():
-    var radius = 11
-
     draw_circle(Vector2(0, 0), radius, self.color)
     draw_arc(Vector2(0, 0), radius, 0, TAU, 30, self.outline_color, 1, true)

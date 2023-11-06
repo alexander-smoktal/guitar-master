@@ -1,4 +1,4 @@
-class_name TunedFretboard
+class_name TunedFretboardSegment
 
 extends Control
 
@@ -13,9 +13,11 @@ var string_notes: Array[Note] = [null,
     Note.new(Note.B, 3),
     Note.new(Note.E, 4)]
 
-var self_scale = Scale.empty()
+var chord = Chord.E_minor()
 # Notes user still need to click to complete a task
 var notes_to_click: Dictionary
+var first_fret = 0
+var num_frets = 3
 
 # A single note clicked
 signal note_clicked(note: Note)
@@ -25,15 +27,17 @@ signal completed(note: Note)
 # Called when the node enters the scene tree for the first time.
 func _ready():
     self.visual_fretboard = FretboardSegment.new()
-    self.visual_fretboard.reset(4, 0)
     self.visual_fretboard.note_clicked.connect(self.__on_note_clicked)
     self.add_child(self.visual_fretboard)
 
     self.player = AudioStreamPlayer.new()
     self.add_child(player)
+    self.reset(Chord.E_minor())
+
+    %PlayChordButton.pressed.connect(self.__on_play_clicked)
 
 func __on_note_clicked(string: int, fret: int):
-    var clicked_note = string_notes[string].shift(fret)
+    var clicked_note = string_notes[string].shift(fret + self.first_fret)
     self.note_clicked.emit(clicked_note)
 
     clicked_note.play_sound(self.player)
@@ -42,19 +46,21 @@ func __on_note_clicked(string: int, fret: int):
     if self.notes_to_click.is_empty():
         self.completed.emit()
 
-    if self_scale.contains(clicked_note):
-        if self_scale.root().is_same_note(clicked_note):
-            self.visual_fretboard.highlight_note(string, fret, GlobalColors.COLOR_ROOT)
-        else:
+    if chord.contains_note(clicked_note):
             self.visual_fretboard.highlight_note(string, fret, GlobalColors.COLOR_OK)
     else:
         self.visual_fretboard.blink_note(string, fret, GlobalColors.COLOR_ERROR)
 
-func reset(a_scale: Scale):
+func __on_play_clicked():
+    self.chord.play_sound(self.player)
+
+func reset(a_chord: Chord):
     # Clean previous highlights
-    self.visual_fretboard.reset(4, 0)
-    self.self_scale = a_scale
+    self.visual_fretboard.reset(self.num_frets, self.first_fret)
+    self.chord = a_chord
     self.reset_notes_to_click()
+
+    %TaskLabel.set_text(tr('PICK_A_CHORD') % self.chord._to_string())
 
 func _notification(what):
     match what:
@@ -66,7 +72,7 @@ func reset_notes_to_click():
     self.notes_to_click = {}
 
     for string in range(1, self.string_notes.size()):
-        for fret in Fretboard.NUM_FRETS:
+        for fret in range(self.first_fret, self.first_fret + self.num_frets):
             var a_note = self.string_notes[string].shift(fret)
-            if self.self_scale.contains(a_note):
+            if chord.contains_note(a_note):
                 self.notes_to_click[[string, fret]] = null

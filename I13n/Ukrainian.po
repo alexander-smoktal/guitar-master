@@ -10,8 +10,14 @@ msgstr ""
 msgid "PICK_A_NOTE"
 msgstr "Оберіть всі ноти %s"
 
+msgid "PICK_A_CHORD"
+msgstr "Оберіть всі ноти з аккорду %s"
+
 msgid "BUTTON_NEXT"
 msgstr "Наступний"
 
 msgid "BUTTON_BACK"
 msgstr "Назад"
+
+msgid "PLAY_CHORD"
+msgstr "Зіграти аккорд"

@@ -53,8 +53,9 @@ func shift(steps: int) -> Note:
     @warning_ignore("integer_division")
     return Note.new((self.note + steps) % 12, self.octave + (self.note + steps) / 12)
 
-func is_same_note(other: Note) -> bool:
-    return self.note == other.note
+# Compare note disregard to an octave
+func is_same_note(other: int) -> bool:
+    return self.note == note
 
 func equal(other: Note) -> bool:
     return self.note == other.note and self.octave == other.octave

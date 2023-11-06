@@ -42,7 +42,7 @@ func __on_note_clicked(string: int, fret: int):
         self.completed.emit()
 
     if self_scale.contains(clicked_note):
-        if self_scale.root().is_same_note(clicked_note):
+        if self_scale.root().is_same_note(clicked_note.note):
             self.visual_fretboard.highlight_note(string, fret, GlobalColors.COLOR_ROOT)
         else:
             self.visual_fretboard.highlight_note(string, fret, GlobalColors.COLOR_OK)

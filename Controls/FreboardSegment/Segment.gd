@@ -25,6 +25,7 @@ var highlights: Array[NoteHighlight]
 
 var num_frets: int = 6
 var first_fret_num: int = 8
+var strings_distance = 0
 
 signal note_clicked(string: int, fret: int)
 
@@ -40,6 +41,7 @@ func highlight_note(string: int, fret: int, color: Color):
         self.strings[self_string].right_point - self.strings[self_string].left_point)
 
     var node_highlight = NoteHighlight.new(color, NoteHighlight.HighLightType.PERSISTENT)
+    node_highlight.resize(self.strings_distance / 2)
     node_highlight.set_position(intersection)
     node_highlight.set_z_index(10)
     self.add_child(node_highlight)
@@ -58,10 +60,13 @@ func blink_note(string: int, fret: int, color: Color):
         self.strings[self_string].right_point - self.strings[self_string].left_point)
 
     var node_highlight = NoteHighlight.new(color, NoteHighlight.HighLightType.BLINK)
+    node_highlight.resize(self.strings_distance / 2)
     node_highlight.set_position(intersection)
     self.add_child(node_highlight)
 
 func reset(new_num_frets: int, a_first_fret_num: int):
+    assert(new_num_frets > 0)
+
     self.num_frets = new_num_frets
     self.first_fret_num = a_first_fret_num
 
@@ -94,7 +99,7 @@ func _input(event):
 
         # Else create or update marker
         if not self.current_note:
-            self.current_note = DataTypes.HoveredNote.new(self)
+            self.current_note = DataTypes.HoveredNote.new(self, self.strings_distance / 2)
         self.current_note.move(hovered_position.string, hovered_position.fret, hovered_position.position)
 
 func _notification(what):
@@ -178,8 +183,7 @@ func __calculate_strings():
     var string_margin = fretboad_left_width / 10
 
     # Distanses between the strings
-    var left_distance = (fretboad_left_width - (string_margin * 2)) / 5
-    var right_distance = (fretboad_right_width - (string_margin * 2)) / 5
+    self.strings_distance = (fretboad_left_width - (string_margin * 2)) / 5
 
     # Current string left and right positions. Update during iteration
     var current_left_pos = self.top_left_point + Vector2(0, string_margin)
@@ -187,8 +191,8 @@ func __calculate_strings():
     for i in range(6):
         self.strings.append(DataTypes.AString.new(current_left_pos, current_right_pos))
 
-        current_left_pos += Vector2(0, left_distance)
-        current_right_pos += Vector2(0, right_distance)
+        current_left_pos += Vector2(0, self.strings_distance)
+        current_right_pos += Vector2(0, self.strings_distance)
 
 # Detect highlited note. Return [] if out of bounds, or [string, fret, position]
 func __detect_current_highlited_note(mouse_position: Vector2) -> DataTypes.FretboardPosition:

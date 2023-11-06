@@ -21,8 +21,9 @@ class HoveredNote:
     var fret: int
     var highlight: NoteHighlight
 
-    func _init(fretboard: Node):
+    func _init(fretboard: Node, highlight_size: int = 11):
         self.highlight = NoteHighlight.new(Color.WHITE_SMOKE, NoteHighlight.HighLightType.PERSISTENT)
+        self.highlight.resize(highlight_size)
         fretboard.add_child(self.highlight)
         self.highlight.set_z_index(0)
 

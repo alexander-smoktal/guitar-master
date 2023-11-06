@@ -10,8 +10,14 @@ msgstr ""
 msgid "PICK_A_NOTE"
 msgstr "Pick all %s notes"
 
+msgid "PICK_A_CHORD"
+msgstr "Pick all notes in a %s chord"
+
 msgid "BUTTON_NEXT"
 msgstr "Next"
 
 msgid "BUTTON_BACK"
 msgstr "Back"
+
+msgid "PLAY_CHORD"
+msgstr "Play chord"

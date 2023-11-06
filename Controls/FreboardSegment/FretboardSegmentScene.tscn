@@ -24,13 +24,14 @@ theme_override_constants/margin_bottom = 20
 layout_mode = 2
 alignment = 1
 
-[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/MainContainer"]
+[node name="TaskLabel" type="Label" parent="CanvasLayer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 3.0
 theme_override_font_sizes/font_size = 35
-text = "PICK_A_NOTE"
+text = "PICK_A_CHORD"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
@@ -67,6 +68,15 @@ size_flags_vertical = 1
 theme_override_font_sizes/font_size = 28
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="PlayChordButton" type="Button" parent="CanvasLayer/MarginContainer/MainContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("3_4y1iq")
+theme_override_font_sizes/font_size = 26
+text = "PLAY_CHORD"
 
 [node name="NextButton" type="Button" parent="CanvasLayer/MarginContainer/MainContainer/HBoxContainer"]
 custom_minimum_size = Vector2(300, 0)
