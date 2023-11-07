@@ -55,7 +55,7 @@ func shift(steps: int) -> Note:
 
 # Compare note disregard to an octave
 func is_same_note(other: int) -> bool:
-    return self.note == note
+    return self.note == other
 
 func equal(other: Note) -> bool:
     return self.note == other.note and self.octave == other.octave
