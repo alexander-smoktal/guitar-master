@@ -1,0 +1,79 @@
+[gd_scene load_steps=3 format=3 uid="uid://ydvas80gi5l"]
+
+[ext_resource type="Script" path="res://Controls/NotesPicker/NotePicker.gd" id="1_kjyd7"]
+[ext_resource type="Theme" uid="uid://cfm2stic5l35d" path="res://Theme.tres" id="2_ylw4w"]
+
+[node name="NotePickerScene" type="Node2D"]
+metadata/_edit_group_ = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+follow_viewport_enabled = true
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="MainContainer" type="VBoxContainer" parent="CanvasLayer/MarginContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="TaskLabel" type="Label" parent="CanvasLayer/MarginContainer/MainContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+theme_override_font_sizes/font_size = 35
+text = "PICK_A_CHORD"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="NotePicker" type="Control" parent="CanvasLayer/MarginContainer/MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+script = ExtResource("1_kjyd7")
+
+[node name="HSeparator2" type="HSeparator" parent="CanvasLayer/MarginContainer/MainContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/MarginContainer/MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BackButton" type="Button" parent="CanvasLayer/MarginContainer/MainContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("2_ylw4w")
+theme_override_font_sizes/font_size = 26
+text = "BUTTON_BACK"
+
+[node name="StatusLabel" type="Label" parent="CanvasLayer/MarginContainer/MainContainer/HBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NextButton" type="Button" parent="CanvasLayer/MarginContainer/MainContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("2_ylw4w")
+theme_override_font_sizes/font_size = 26
+disabled = true
+text = "BUTTON_NEXT"

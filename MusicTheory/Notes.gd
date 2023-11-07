@@ -47,7 +47,7 @@ func _to_string():
     return "%s%d" % [NOTES_STRINGS[self.note], self.octave]
 
 func note_string():
-    return "%s" % NOTES_STRINGS[self.note]
+    return NOTES_STRINGS[self.note]
 
 func shift(steps: int) -> Note:
     @warning_ignore("integer_division")
@@ -65,3 +65,6 @@ func play_sound(a_player: AudioStreamPlayer):
     a_player.set_stream(sound)
     a_player.play()
 
+static func note_to_string(a_note: int) -> String:
+    #print('--> %d %s', a_note, NOTES_STRINGS[a_note])
+    return NOTES_STRINGS[a_note]
