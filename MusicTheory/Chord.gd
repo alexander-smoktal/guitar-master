@@ -7,7 +7,7 @@ var chord_name: String
 static var audio_players: Array[AudioStreamPlayer] = []
 
 static func E_major(first_fret: int = 0) -> Chord:
-    var result = Chord.new('E')
+    var result: Chord = Chord.new('E')
     match first_fret:
         0:
             result.notes = [Note.new(Note.E, 2), Note.new(Note.B, 2), Note.new(Note.E, 3),

@@ -66,5 +66,4 @@ func play_sound(a_player: AudioStreamPlayer):
     a_player.play()
 
 static func note_to_string(a_note: int) -> String:
-    #print('--> %d %s', a_note, NOTES_STRINGS[a_note])
     return NOTES_STRINGS[a_note]

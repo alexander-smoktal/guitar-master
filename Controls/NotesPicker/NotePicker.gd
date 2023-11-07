@@ -17,15 +17,19 @@ var top_right_point: Vector2
 var bottom_left_point: Vector2
 var bottom_right_point: Vector2
 
-signal note_clicked(note: int, index: int)
+signal note_clicked(note: int)
 
 # Highlight note with a dot
-func highlight_note(index: int, color: Color):
-    self.pickers[index].highlight(color)
+func highlight_note(a_note: int, color: Color):
+    for a_picker in self.pickers:
+        if a_picker.note == a_note:
+            a_picker.highlight(color)
 
 # Highlight note with a dot
-func blink_note(index: int, color: Color):
-    self.pickers[index].blink(color)
+func blink_note(a_note: int, color: Color):
+    for a_picker in self.pickers:
+        if a_picker.note == a_note:
+            a_picker.blink(color)
 
 func reset():
     for picker in self.pickers:
@@ -38,6 +42,8 @@ func _ready():
     var add_picker = func(a_note: int):
         var picker = PickerRect.new(a_note)
         self.add_child(picker)
+        picker.on_clicked.connect(self.__on_note_clicked.bind(a_note))
+
         self.pickers.append(picker)
 
     add_picker.call(Note.C_SHARP)
@@ -63,6 +69,9 @@ func _notification(what):
 func _draw():
     pass
 
+func __on_note_clicked(a_note: int):
+    self.note_clicked.emit(a_note)
+
 func __resize(new_size: Vector2):
     # Fretboard width
     var total_height = new_size.y * TOTAL_HEIGHT
@@ -74,8 +83,6 @@ func __resize(new_size: Vector2):
 
     var start_x = (new_size.x - total_width) / 2
     var start_y = (new_size.y - total_height) / 2
-
-    print('%d %d %d %d' % [start_x, start_y, element_height, element_width])
 
     var adjust_picker = func(index: int, ix: int, iy: int):
         var picker =  self.pickers[index]
