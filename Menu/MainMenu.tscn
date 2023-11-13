@@ -30,7 +30,7 @@ size_flags_vertical = 4
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
-text = "[center][font_size=80]Guitar[img]res://Menu/MenuGuitar.png[/img]smo
+text = "[center][font_size=80]Guitar[color=DEEP_SKY_BLUE]I[/color]smo
 [/font_size][/center]
 "
 fit_content = true
