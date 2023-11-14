@@ -3,6 +3,7 @@ class_name FretboardSegment
 extends Control
 
 const DataTypes = preload("res://Controls/DataTypes.gd")
+const HoveredNote = preload("res://Controls/Fretboard/HoveredNote.gd")
 
 # Board width in fraction of self control height
 const BOARD_WIDTH = 0.5
@@ -20,11 +21,12 @@ var bottom_right_point: Vector2
 var out_of_bounds_polygon: PackedVector2Array
 
 # Current
-var current_note: DataTypes.HoveredNote
+var current_note: HoveredNote
 var highlights: Array[NoteHighlight]
 
 var num_frets: int = 6
 var first_fret_num: int = 8
+# Distance between strings to resize highlight marker
 var strings_distance = 0
 
 signal note_clicked(string: int, fret: int)
@@ -99,8 +101,9 @@ func _input(event):
 
         # Else create or update marker
         if not self.current_note:
-            self.current_note = DataTypes.HoveredNote.new(self, self.strings_distance / 2)
-        self.current_note.move(hovered_position.string, hovered_position.fret, hovered_position.position)
+            self.current_note = HoveredNote.new(self, hovered_position.position, self.strings_distance / 2)
+        else:
+            self.current_note.move(hovered_position.string, hovered_position.fret, hovered_position.position)
 
 func _notification(what):
     match what:

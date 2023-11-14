@@ -16,29 +16,6 @@ class AString:
         self.left_point = a_left_point
         self.right_point = a_right_point
 
-class HoveredNote:
-    var string: int
-    var fret: int
-    var highlight: NoteHighlight
-
-    func _init(fretboard: Node, highlight_size: int = 11):
-        self.highlight = NoteHighlight.new(Color.WHITE_SMOKE, NoteHighlight.HighLightType.PERSISTENT)
-        self.highlight.resize(highlight_size)
-        fretboard.add_child(self.highlight)
-        self.highlight.set_z_index(0)
-
-    func move(a_string: int, a_fret: int, a_position: Vector2):
-        self.string = a_string
-        self.fret = a_fret
-        self.highlight.set_position(a_position)
-        #set_transform(Transform2D(0, current_note.position))
-
-    func position() -> Vector2:
-        return self.highlight.position
-
-    func clear():
-        self.highlight.queue_free()
-
 class FretboardPosition:
     var string: int
     var fret: int

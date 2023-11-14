@@ -27,6 +27,24 @@ func _init(a_color: Color, a_highlight_type: HighLightType, a_result_color = Col
 func resize(a_radius: int):
     self.radius = a_radius
 
+func move(pos: Vector2):
+    var tween = self.create_tween()
+    tween.set_ease(Tween.EASE_IN_OUT)
+    tween.tween_property(self, "position", pos, .05)
+
+func fade_in(pos: Vector2):
+    self.set_position(pos)
+
+    var tween = self.create_tween()
+    tween.set_ease(Tween.EASE_OUT)
+    tween.tween_method(self.__change_alpha, 0.0, 1.0, .1)
+
+func fade_out():
+    var tween = self.create_tween()
+    tween.set_ease(Tween.EASE_OUT)
+    tween.tween_method(self.__change_alpha, 1.0, 0.0, .1)
+    tween.tween_callback(self.queue_free)
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
     match self.highlight_type:

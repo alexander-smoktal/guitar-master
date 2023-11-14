@@ -3,6 +3,7 @@ class_name Fretboard
 extends Control
 
 const DataTypes = preload("res://Controls/DataTypes.gd")
+const HoveredNote = preload("res://Controls/Fretboard/HoveredNote.gd")
 
 # Board width in fraction of viewport height
 const BOARD_WIDTH = 0.25
@@ -18,9 +19,11 @@ var bottom_left_point: Vector2
 var bottom_right_point: Vector2
 # Polygon which we use to highlight mouse position event if mouse is out of the fretboard boundaries
 var out_of_bounds_polygon: PackedVector2Array
+# Distance between strings to resize highlight marker
+var strings_distance = 0
 
 # Current
-var current_note: DataTypes.HoveredNote
+var current_note: HoveredNote
 var highlights: Array[NoteHighlight]
 
 signal note_clicked(string: int, fret: int)
@@ -37,6 +40,7 @@ func highlight_note(string: int, fret: int, color: Color):
         self.strings[self_string].right_point - self.strings[self_string].left_point)
 
     var node_highlight = NoteHighlight.new(color, NoteHighlight.HighLightType.PERSISTENT)
+    node_highlight.resize(self.strings_distance / 2)
     node_highlight.set_position(intersection)
     node_highlight.set_z_index(10)
     self.add_child(node_highlight)
@@ -55,6 +59,7 @@ func blink_note(string: int, fret: int, color: Color):
         self.strings[self_string].right_point - self.strings[self_string].left_point)
 
     var node_highlight = NoteHighlight.new(color, NoteHighlight.HighLightType.BLINK)
+    node_highlight.resize(self.strings_distance / 2)
     node_highlight.set_position(intersection)
     self.add_child(node_highlight)
 
@@ -86,8 +91,9 @@ func _input(event):
 
         # Else create or update marker
         if not self.current_note:
-            self.current_note = DataTypes.HoveredNote.new(self)
-        self.current_note.move(hovered_position.string, hovered_position.fret, hovered_position.position)
+            self.current_note = HoveredNote.new(self, hovered_position.position, self.strings_distance / 2)
+        else:
+            self.current_note.move(hovered_position.string, hovered_position.fret, hovered_position.position)
 
 func _notification(what):
     match what:
@@ -168,6 +174,8 @@ func __calculate_strings():
     # Distanses between the strings
     var left_distance = (fretboad_left_width - (string_margin * 2)) / 5
     var right_distance = (fretboad_right_width - (string_margin * 2)) / 5
+
+    self.strings_distance = left_distance
 
     # Current string left and right positions. Update during iteration
     var current_left_pos = self.top_left_point + Vector2(0, string_margin)
