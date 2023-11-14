@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="97.602036mm"
-   height="284.63614mm"
-   viewBox="0 0 97.602036 284.63614"
+   width="107.60204mm"
+   height="294.63614mm"
+   viewBox="0 0 107.60204 294.63614"
    version="1.1"
    id="svg5"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
@@ -27,8 +27,8 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="0.97313708"
-     inkscape:cx="-26.717716"
-     inkscape:cy="685.92598"
+     inkscape:cx="-143.86462"
+     inkscape:cy="704.42285"
      inkscape:window-width="1920"
      inkscape:window-height="1121"
      inkscape:window-x="0"
@@ -45,10 +45,11 @@
      inkscape:bbox-nodes="true"
      inkscape:snap-midpoints="false"
      inkscape:snap-others="true"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0" />
+     fit-margin-top="5"
+     fit-margin-left="5"
+     fit-margin-right="5"
+     fit-margin-bottom="5"
+     lock-margins="true" />
   <defs
      id="defs2">
     <marker
@@ -71,7 +72,7 @@
      id="layer4"
      inkscape:label="Deck"
      style="display:inline"
-     transform="translate(-55.370024,-6.2501086)">
+     transform="translate(-50.370024,-1.2501086)">
     <path
        style="display:inline;fill:#0f0f0f;fill-opacity:1;stroke:#ebebeb;stroke-width:0.465;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 96.23963,159.5155 c 0,0 -13.716884,-1.09711 -21.229119,8.22656 -9.320335,11.02847 -3.906525,20.13232 -0.170444,28.21429 0,0 3.255889,5.55121 2.252932,11.59719 -1.430579,5.94427 -21.987705,19.17485 -21.481274,41.5774 0.839646,35.94199 32.916688,41.5157 48.270105,41.52266 33.05943,0.0645 48.55177,-19.07468 48.85659,-40.35209 0.17518,-25.82525 -19.77938,-33.50905 -21.3213,-44.69787 -0.53401,-6.90793 4.55935,-13.30498 5.42812,-15.67994 4.14273,-7.40563 0.54931,-15.17316 0.54931,-15.17316 -0.56457,-1.55159 -3.17831,-1.97427 -4.33947,-0.30028 -3.52,5.86197 -7.94282,6.06431 -9.40436,6.2336 -3.89051,0.13781 -6.11619,-1.73429 -6.11619,-1.73429 -7.34262,-6.56317 -6.54572,-19.09644 -6.54572,-19.09644 z"
@@ -492,7 +493,7 @@
      id="layer3"
      inkscape:label="Work"
      style="display:inline"
-     transform="translate(-55.370024,-6.2501086)">
+     transform="translate(-50.370024,-1.2501086)">
     <g
        id="g38406"
        style="display:inline">
@@ -1108,7 +1109,7 @@
      id="layer2"
      inkscape:label="Top"
      style="display:inline"
-     transform="translate(-55.370024,-6.2501086)">
+     transform="translate(-50.370024,-1.2501086)">
     <path
        style="fill:none;stroke:#ffffff;stroke-width:0.3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 96.774729,246.28498 99.114582,47.685533 98.645559,32.416278"

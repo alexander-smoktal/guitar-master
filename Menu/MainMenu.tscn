@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://dvp6jus4guv4g"]
+[gd_scene load_steps=3 format=3 uid="uid://dvp6jus4guv4g"]
 
 [ext_resource type="Texture2D" uid="uid://br23jbm6ceksb" path="res://Menu/LesPaul.svg" id="1_7o2b0"]
+[ext_resource type="Texture2D" uid="uid://s7sod7i8ewg6" path="res://Menu/Stratocaster.svg" id="2_rcdqc"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -106,7 +107,10 @@ texture = ExtResource("1_7o2b0")
 expand_mode = 4
 stretch_mode = 5
 
-[node name="MenuRightMargin" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="MenuRightMargin" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
+texture = ExtResource("2_rcdqc")
+expand_mode = 4
+stretch_mode = 5
