@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://dvp6jus4guv4g"]
+[gd_scene load_steps=4 format=3 uid="uid://dvp6jus4guv4g"]
 
 [ext_resource type="Texture2D" uid="uid://br23jbm6ceksb" path="res://Menu/LesPaul.svg" id="1_7o2b0"]
+[ext_resource type="Texture2D" uid="uid://bqwo13ltiwtqo" path="res://Menu/Jazzmaster.svg" id="2_kamqw"]
 [ext_resource type="Texture2D" uid="uid://s7sod7i8ewg6" path="res://Menu/Stratocaster.svg" id="2_rcdqc"]
 
 [node name="MainMenu" type="Control"]
@@ -99,7 +100,7 @@ focus_mode = 0
 theme_override_font_sizes/font_size = 40
 text = "Exit"
 
-[node name="MenuLeftMargin" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="MenuLesPaul" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
@@ -107,7 +108,15 @@ texture = ExtResource("1_7o2b0")
 expand_mode = 4
 stretch_mode = 5
 
-[node name="MenuRightMargin" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="MenuJazzMaster" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+texture = ExtResource("2_kamqw")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="MenuStratocaster" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
