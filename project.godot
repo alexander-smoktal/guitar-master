@@ -11,8 +11,8 @@ config_version=5
 [application]
 
 config/name="GuitarMaster"
-run/main_scene="res://Menu/MainMenu.tscn"
-config/features=PackedStringArray("4.1", "Mobile")
+run/main_scene="res://Scenes/SceneLoader/TestScene.tscn"
+config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://icon.svg"
 
 [display]
@@ -31,4 +31,5 @@ locale/test="en"
 
 environment/defaults/default_clear_color=Color(0.00392157, 0.00392157, 0.00392157, 1)
 anti_aliasing/quality/msaa_2d=3
+anti_aliasing/quality/screen_space_aa=1
 anti_aliasing/quality/use_taa=true
