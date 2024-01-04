@@ -28,9 +28,7 @@ func __add_entry(a_name: String, type: ControlType, enum_variants: Array):
     print("Name: ", a_name, " type: ", type, " enums: ", enum_variants)
 
 static func __parse_name(a_name: String) -> String:
-    var words = a_name.split("_")
-    words[0] = words[0].capitalize()
-    return " ".join(words)
+    return StringUtils.snake_to_sentence(a_name)
 
 static func __parse_type(type: int, a_class_name: String) -> ControlType:
     if type == Variant.Type.TYPE_BOOL:
@@ -54,11 +52,6 @@ static func __parse_enum_variants(a_class_name: String) -> Array:
 
     var result = []
     for variant in enum_obj[enum_components[1]]:
-        var words = variant.split("_")
-        for i in len(words):
-            if i == 0:
-                words[i] = words[i].capitalize()
-            else:
-                words[i] = words[i].to_lower()
-        result.append(" ".join(words))
+        result.append(StringUtils.snake_to_sentence(variant))
+
     return result
